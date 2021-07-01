@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+
+</head>
+
+<body>
+
+    <form action="" method="get" onsubmit="getArtists(this.value); return false;">
+        <label for="search-artist">Search Artist:</label>
+        <input id="search-artist" type="search" aria-label="Search for any music artist" autofocus>
+        <button>submit</button>
+    </form>
+
+    <div id="app" class="container">
+    </div>
+
+
+
+    <script>
+        // cleans raw query entered by user and makes it ready to be used
+        function queryReady(rawSearchValue) {
+            if (rawSearchValue.includes(' ')) {
+                rawSearchValue = rawSearchValue.split(' ').join('_');
+                return rawSearchValue;
+            }
+            else {
+                return rawSearchValue;
+            }
+        }
+
+        // display artist
+        // if no artist then do show error
+        // todo error handling
+        function getArtistisFromAPI(searchQuery) {
+            return fetch(`https://theaudiodb.com/api/v1/json/1/search.php?s=${searchQuery}`)
+                .then((response) => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('Something went wrong');
+                    }
+                })
+                .then((responseJson) => {
+                    return responseJson
+                    // Do something with the response
+                })
+                .catch((error) => {
+                    console.log(error)
+                });
+        }
+
+        function itemNotFound() {
+            const notFoundImgTag = document.createElement('img');
+            notFoundImgTag.setAttribute('src', './assets/images/404.png');
+            let appDocument = document.querySelector('#app');
+            appDocument.appendChild(notFoundImgTag);
+            let notFoundText = document.createElement('h1');
+            notFoundText.innerText = 'Item not found...please try again';
+            notFoundText.style.marginLeft = '20rem';
+            notFoundText.style.fontSize = '10vh';
+            appDocument.appendChild(notFoundText);
+        }
+
+        function getArtists() {
+            let artistToSearch = document.querySelector('#search-artist').value;
+            let searchQuery = queryReady(artistToSearch);
+            getArtistisFromAPI(searchQuery)
+                .then(response => response);
+            itemNotFound();
+        }
+
+    </script>
+</body>
+
+</html>
