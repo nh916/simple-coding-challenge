@@ -15,6 +15,7 @@ Explain how you would copy/clone/ripp this page and make it work on your local e
 1.b) How you would minimize the errors?
 1.c) If you would need to eliminate a scripts explain why?
 THIS NEEDS SOME WORK!
+	put all external analytics tags inside of google tag manager that already exists within the page
 1.d) Please clone the following page:
 	 https://www.beautystatcosmetics.com/en/pre-6.html
 	 Time for this should be 15mins

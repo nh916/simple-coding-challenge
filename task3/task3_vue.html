@@ -19,13 +19,30 @@
 
     <!-- vue dev script -->
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Krona+One&display=swap');
+
+        #navbar {
+            margin-bottom: 2rem;
+        }
+
+        #website-logo {
+            font-family: 'Krona One', sans-serif;
+        }
+
+        #search-form {
+            margin-bottom: 2rem;
+        }
+    </style>
 </head>
 
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <!-- navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="navbar">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">viberr</a>
+            <a class="navbar-brand" href="#" id="website-logo">walkman</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation">
@@ -39,46 +56,115 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#">Link</a>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            Dropdown
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#">Action</a></li>
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-                    </li>
                 </ul>
-                <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
             </div>
         </div>
     </nav>
 
-    <div id="app">
-        <h1>{{ message }}</h1>
-    </div>
 
+    <main>
+        <div id="app" class="container">
+            <!-- search bar -->
+            <form class="d-flex" id="search-form" @submit.prevent>
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
+                    @keyup="getArtists" v-model="searchValue" autofocus>
+                <button class="btn btn-primary" type="submit" @click="getArtists">Search</button>
+            </form>
+
+            <!-- not found picture section -->
+            <section id="not-found" v-show="notFound">
+                <h1>item not found...</h1>
+                <img src="./assets/images/404.png" alt="404 not found picture" class="img-fluid">
+            </section>
+
+            <section id="artist-list" v-show="!notFound">
+                <h1 v-if="!artist.length">No Artist found</h1>
+                <h1 v-if="artist.length">{{ artist.length }} found</h1>
+
+
+
+            </section>
+
+            <section id="artist-album" v-show="!notFound">
+
+            </section>
+        </div>
+    </main>
+
+
+
+    <footer>
+
+    </footer>
 </body>
 
 
 <script>
-    var app = new Vue({
+    let app = new Vue({
         el: '#app',
+
         data: {
-            message: 'Hello Vue!'
-        }
-    })
+            searchValue: '',
+            queryReadyValue: '',
+            notFound: false,
+            artist: {},
+        },
+
+        methods: {
+            queryReady: function (rawSearchValue) {
+                if (rawSearchValue.includes(' ')) {
+                    rawSearchValue = rawSearchValue.split(' ').join('_');
+                    return rawSearchValue;
+                }
+                else {
+                    return rawSearchValue;
+                }
+            },
+
+            getArtistisFromAPI: function (searchQuery) {
+                return fetch(`https://theaudiodb.com/api/v1/json/1/search.php?s=${searchQuery}`)
+                    .then((response) => {
+                        if (response.ok) {
+                            return response.json();
+                        } else {
+                            // todo error handling
+                            throw new Error('Something went wrong');
+                        }
+                    })
+                    .then((responseJson) => {
+                        return responseJson
+                        // Do something with the response
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    });
+            },
+
+            itemNotFound: function () {
+            },
+
+            setArtist: function (givenArtist) {
+                givenArtist = givenArtist.artists;
+
+                this.artist = givenArtist;
+            },
+
+            getArtists: function () {
+                let artistToSearch = this.searchValue;
+                let searchQuery = this.queryReady(artistToSearch);
+
+                this.getArtistisFromAPI(searchQuery)
+                    .then(response => {
+                        this.setArtist(response);
+                    }
+
+                    );
+
+                this.itemNotFound();
+            },
+        },
+
+    });
 </script>
 
 </html>
