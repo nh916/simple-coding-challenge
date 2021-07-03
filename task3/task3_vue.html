@@ -7,19 +7,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 
-    <!-- CSS only -->
+    <!-- Bootstrap CSS only -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
 
-    <!-- JavaScript Bundle with Popper -->
+    <!-- Bootstrap JavaScript Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
 
-    <!-- vue dev script -->
+    <!-- fontawesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+        integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- vue JS dev script -->
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 
+    <!-- in a real project these styles would most likely go in an asset folder and they would most likely be written in Scss and compiled and minified 
+        with a task runner such as gulp or grunt for better performance and maintainability-->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Krona+One&display=swap');
 
@@ -33,6 +40,27 @@
 
         #search-form {
             margin-bottom: 2rem;
+        }
+
+        #number-of-artists-found {
+            margin-bottom: 3rem;
+            font-size: 2rem;
+        }
+
+        .artist-card-name {
+            font-size: 1.5rem;
+        }
+
+        /* todo this part is not working */
+        #artist-card-preview {
+            margin-bottom: 20rem !important;
+        }
+
+        .artist-bio-elipsis {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+            overflow: hidden;
         }
     </style>
 </head>
@@ -71,21 +99,71 @@
                 <button class="btn btn-primary" type="submit" @click="getArtists">Search</button>
             </form>
 
-            <!-- not found picture section -->
-            <section id="not-found" v-show="notFound">
-                <h1>item not found...</h1>
-                <img src="./assets/images/404.png" alt="404 not found picture" class="img-fluid">
+            <section id="number-of-artists" v-show="!notFound">
+                <h1 v-if="artists == null">No artists found</h1>
+                <!-- using correct html syntax and changing the font with css for better accessibility -->
+                <h1 id="number-of-artists-found" v-else-if="artists.length">{{ artists.length }} found</h1>
+                <h1 v-else></h1>
             </section>
 
-            <section id="artist-list" v-show="!notFound">
-                <h1 v-if="!artist.length">No Artist found</h1>
-                <h1 v-if="artist.length">{{ artist.length }} found</h1>
 
+            <section id="artist-names-results" v-if="artists && artists.length">
+                <div v-for="artist in artists" class="artist-card-preview">
+                    <div class="card w-75">
+                        <div class="card-body">
+                            <!-- using correct html syntax and changing the font with css for better accessibility -->
+                            <h2 class="card-title artist-card-name">{{ artist.strArtist }}</h2>
+                            <p class="card-text artist-bio-elipsis">
+                                {{ artist.strBiographyEN }}
+                            </p>
+                            <button class="btn btn-primary" @click="showArtistProperties(artist)">Show more</button>
+                        </div>
+                    </div>
+                    <!-- todo check on this -->
+                    <br>
 
-
+                </div>
             </section>
 
-            <section id="artist-album" v-show="!notFound">
+
+            <section id="artist-bio" v-if="Object.keys(selectedArtist).length != 0 ">
+
+
+                <!-- this would be awesome to have an api that would give us the country flag as an icon to put next to the country word -->
+
+                <!-- todo add ifs to all of these in case one is empty -->
+                <!-- todo clean the inside of it before giving new results -->
+                <p>
+                    Country: {{ selectedArtist.strCountry}} <i class="fas fa-flag"></i>
+                </p>
+
+                <p>
+                    Name: {{ selectedArtist.strArtist }}
+                </p>
+
+                <p>
+                    Label: {{ selectedArtist.strLabel}}
+                </p>
+
+                <p>
+                    Year Formed: {{ selectedArtist.intFormedYear}}
+                </p>
+
+                <p>
+                    Members: {{ selectedArtist.intMembers}}
+                </p>
+
+                <p>
+                    Gender: {{ selectedArtist.Male}}
+                </p>
+
+                <p>
+                    intBornYear: {{ selectedArtist.intBornYear}}
+                </p>
+
+                <p>
+                    intBornYear: {{ selectedArtist.intBornYear}}
+                </p>
 
             </section>
         </div>
@@ -107,7 +185,8 @@
             searchValue: '',
             queryReadyValue: '',
             notFound: false,
-            artist: {},
+            artists: {},
+            selectedArtist: {},
         },
 
         methods: {
@@ -140,27 +219,43 @@
                     });
             },
 
-            itemNotFound: function () {
-            },
-
             setArtist: function (givenArtist) {
                 givenArtist = givenArtist.artists;
 
-                this.artist = givenArtist;
+                this.artists = givenArtist;
+            },
+
+            showArtistProperties: function (artist) {
+                this.selectedArtist = artist;
+
+                // empty out the page except for nav and search bar
+                // ideally we would switch html templates to keep templates cleaner and more maintainable but since this is a challenge 
+                // I put everything in one html file
+                document.querySelector('#number-of-artists').style.display = "none";
+                document.querySelector('#artist-names-results').style.display = "none";
+
+
             },
 
             getArtists: function () {
                 let artistToSearch = this.searchValue;
                 let searchQuery = this.queryReady(artistToSearch);
 
+                // 
+                if (document.querySelector('#number-of-artists')) {
+                    document.querySelector('#number-of-artists').style.display = "block";
+                }
+
+                if (document.querySelector('#artist-names-results')) {
+                    document.querySelector('#artist-names-results').style.display = "block";
+                }
+
+
                 this.getArtistisFromAPI(searchQuery)
                     .then(response => {
                         this.setArtist(response);
-                    }
-
-                    );
-
-                this.itemNotFound();
+                        console.log(response);
+                    });
             },
         },
 
