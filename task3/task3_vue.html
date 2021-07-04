@@ -5,7 +5,11 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta name="description" content="search artists and learn about their biography">
+    <meta name="keywords" content="music, search, artist, genre, bio, biography">
+
+
+    <title>walkman music search</title>
 
     <!-- Bootstrap CSS only -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -42,7 +46,7 @@
             margin-bottom: 2rem;
         }
 
-        #number-of-artists-found {
+        .number-of-artists-found {
             margin-bottom: 3rem;
             font-size: 2rem;
         }
@@ -62,6 +66,39 @@
             -webkit-line-clamp: 3;
             overflow: hidden;
         }
+
+        .jumbotron {
+            /* background-image: url(https://images.unsplash.com/photo-1473646590311-c48e1bc77b44?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NjB8fG11c2ljfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60); */
+            background-size: cover;
+            height: 100%;
+            background-image: linear-gradient(to bottom, rgba(30, 30, 30, 0.6) 0%, rgba(30, 30, 30, 0.9) 100%), url(https://images.unsplash.com/photo-1473646590311-c48e1bc77b44?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NjB8fG11c2ljfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60)
+        }
+
+        .artist-social-media {
+            margin-right: 1rem;
+            /* bootstrap info color*/
+            color: #17a2b8;
+        }
+
+        #artist-jumbotron-heading {
+            margin-bottom: 1rem;
+        }
+
+        #artist-page-heading-actual-name {
+            margin-bottom: 2rem;
+        }
+
+        i {
+            margin-right: 1rem;
+        }
+
+        #artist-text-bio {
+            margin-bottom: 5rem;
+        }
+
+        .artist-album-cards {
+            margin-bottom: 2rem;
+        }
     </style>
 </head>
 
@@ -70,28 +107,24 @@
     <!-- navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="navbar">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#" id="website-logo">walkman</a>
+            <a class="navbar-brand" href="./task3_vue.html" id="website-logo">
+                <i class="fas fa-record-vinyl"></i> walkman
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
-                    </li>
-                </ul>
-            </div>
         </div>
     </nav>
 
 
     <main>
         <div id="app" class="container">
+
+            <!-- todo add a vinyl record here to make it look more musical -->
+
+
             <!-- search bar -->
             <form class="d-flex" id="search-form" @submit.prevent>
                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
@@ -100,12 +133,23 @@
             </form>
 
             <section id="number-of-artists" v-show="!notFound">
-                <h1 v-if="artists == null">No artists found</h1>
-                <!-- using correct html syntax and changing the font with css for better accessibility -->
-                <h1 id="number-of-artists-found" v-else-if="artists.length">{{ artists.length }} found</h1>
-                <h1 v-else></h1>
-            </section>
+                <div v-if="artists == null">
+                    <h1>No artists found</h1>
+                </div>
 
+                <div v-else-if="artists.length == 1">
+
+                    <!-- using correct html syntax and changing the font with css for better accessibility -->
+                    <h1 class="number-of-artists-found">{{ artists.length }} result found</h1>
+                </div>
+
+
+                <div v-else-if="artists.length > 1">
+
+                    <!-- using correct html syntax and changing the font with css for better accessibility -->
+                    <h1 class="number-of-artists-found">{{ artists.length }} results found</h1>
+                </div>
+            </section>
 
             <section id="artist-names-results" v-if="artists && artists.length">
                 <div v-for="artist in artists" class="artist-card-preview">
@@ -119,7 +163,7 @@
                             <button class="btn btn-primary" @click="showArtistProperties(artist)">Show more</button>
                         </div>
                     </div>
-                    <!-- todo check on this -->
+
                     <br>
 
                 </div>
@@ -128,44 +172,113 @@
 
             <section id="artist-bio" v-if="Object.keys(selectedArtist).length != 0 ">
 
-
                 <!-- this would be awesome to have an api that would give us the country flag as an icon to put next to the country word -->
 
                 <!-- todo add ifs to all of these in case one is empty -->
-                <!-- todo clean the inside of it before giving new results -->
-                <p>
-                    Country: {{ selectedArtist.strCountry}} <i class="fas fa-flag"></i>
-                </p>
+                <div class="jumbotron jumbotron-fluid">
+                    <div class="container">
+                        <h1 class="display-4 text-white" v-if="selectedArtist.strArtist" id="artist-jumbotron-heading">
+                            {{ selectedArtist.strArtist }}
+                        </h1>
+                        <p class="lead text-primary">
 
-                <p>
-                    Name: {{ selectedArtist.strArtist }}
-                </p>
+                            <a v-if="selectedArtist.strWebsite" class="artist-social-media"
+                                :href="'https://'+selectedArtist.strWebsite" target="_blank">
+                                <i class="fab fa-internet-explorer"></i>
+                            </a>
 
-                <p>
-                    Label: {{ selectedArtist.strLabel}}
-                </p>
+                            <a v-if="selectedArtist.strFacebook" class="artist-social-media"
+                                :href="'https://'+selectedArtist.strFacebook" target="_blank">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
 
-                <p>
-                    Year Formed: {{ selectedArtist.intFormedYear}}
-                </p>
+                            <a v-if="selectedArtist.strTwitter" class="artist-social-media"
+                                :href="'https://'+selectedArtist.strTwitter" target="_blank">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                        </p>
+                    </div>
+                </div>
 
-                <p>
-                    Members: {{ selectedArtist.intMembers}}
-                </p>
+                <h2 id="artist-page-heading-actual-name" v-if="selectedArtist.strArtistAlternate">
+                    {{ selectedArtist.strArtistAlternate}}
+                </h2>
 
-                <p>
-                    Gender: {{ selectedArtist.Male}}
-                </p>
+                <hr>
 
-                <p>
-                    intBornYear: {{ selectedArtist.intBornYear}}
-                </p>
+                <section>
+                    <!-- artist albums -->
+                    <div>
+                        <div class="row artist-album-cards">
 
-                <p>
-                    intBornYear: {{ selectedArtist.intBornYear}}
-                </p>
+                            <div class="col-lg-3 col-md-6 col-sm-12" v-for="album in albums" style="margin: 2rem;">
+                                <div class="card" style="width: 18rem;">
+
+                                    <!-- for real world production there would be multiple react or vue files that would cut down the rendering cost of constantly repainting and speed up performance of by significant amounts -->
+                                    <img class="card-img-top" :src="album.strAlbumThumb"
+                                        :alt="album.strArtist + ' ' + album.strAlbumStripped + ' album cover art'">
+
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ album.strAlbum }}</h5>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                </section>
+
+                <hr>
+
+                <section>
+                    <!-- artist bio -->
+                    <p v-if="selectedArtist.strCountry">
+                        <i class="fas fa-flag"></i> <b>Country:</b> {{ selectedArtist.strCountry}}
+                    </p>
+
+                    <p v-if="selectedArtist.strLabel">
+                        <i class="fas fa-compact-disc"></i> <b>Label:</b> {{ selectedArtist.strLabel}}
+                    </p>
+
+                    <p v-if="selectedArtist.intFormedYear">
+                        <i class="fas fa-glass-cheers"></i> <b>Year Formed:</b> {{ selectedArtist.intFormedYear}}
+                    </p>
+
+                    <p v-if="selectedArtist.intMembers">
+                        <i class="fas fa-users"></i> <b>Members:</b> {{ selectedArtist.intMembers}}
+                    </p>
+
+                    <p v-if="selectedArtist.strGender">
+                        <span v-if="selectedArtist.strGender == 'Male'">
+                            <i class="fas fa-mars"></i>
+                        </span>
+
+                        <span v-else>
+                            <i class="fas fa-venus"></i>
+                        </span>
+
+                        <b style="margin-left: 0.4rem;">Gender:</b> {{ selectedArtist.strGender }}
+                    </p>
+
+                    <p v-if="selectedArtist.strGenre">
+                        <i class="fas fa-music"></i> <b>Genre:</b> {{ selectedArtist.strGenre}}
+                    </p>
+
+                    <hr>
+
+                </section>
+
+                <!-- artist text bio -->
+                <section>
+                    <p v-if="selectedArtist.strBiographyEN" id="artist-text-bio">
+                        {{ selectedArtist.strBiographyEN }}
+                    </p>
+                </section>
 
             </section>
+
         </div>
     </main>
 
@@ -182,11 +295,13 @@
         el: '#app',
 
         data: {
+            apiKey: 1,
             searchValue: '',
             queryReadyValue: '',
             notFound: false,
             artists: {},
             selectedArtist: {},
+            albums: {},
         },
 
         methods: {
@@ -201,27 +316,54 @@
             },
 
             getArtistisFromAPI: function (searchQuery) {
-                return fetch(`https://theaudiodb.com/api/v1/json/1/search.php?s=${searchQuery}`)
+                return fetch(`https://theaudiodb.com/api/v1/json/${this.apiKey}/search.php?s=${searchQuery}`)
                     .then((response) => {
                         if (response.ok) {
                             return response.json();
                         } else {
-                            // todo error handling
                             throw new Error('Something went wrong');
+                            console.error('error inside getArtistisFromAPI vue method from task3_vue.html');
                         }
                     })
                     .then((responseJson) => {
-                        return responseJson
-                        // Do something with the response
+                        return responseJson;
                     })
                     .catch((error) => {
-                        console.log(error)
+                        console.error('error inside getArtistisFromAPI vue method from task3_vue.html');
+                        console.error(error);
                     });
             },
 
-            setArtist: function (givenArtist) {
-                givenArtist = givenArtist.artists;
 
+            fetchAlbumsFromAPI: function () {
+                return fetch(`https://theaudiodb.com/api/v1/json/${this.apiKey}/album.php?i=${this.selectedArtist.idArtist}`)
+                    .then((response) => {
+                        if (response.ok) {
+                            return response.json();
+                        } else {
+                            throw new Error('Something went wrong');
+                            console.error('error inside fetchAlbumsFromAPI vue method from task3_vue.html');
+                        }
+                    })
+                    .then((responseJson) => {
+                        return responseJson;
+
+                    })
+                    .catch((error) => {
+                        console.error('error inside fetchAlbumsFromAPI vue method from task3_vue.html');
+                        console.error(error);
+                    });
+            },
+
+            setAlubums: function (responseAlbums) {
+                this.albums = responseAlbums.album;
+                console.log("album data", this.albums);
+            },
+
+
+            setArtist: function (givenArtist) {
+                // todo what was I doing with this again?
+                givenArtist = givenArtist.artists;
                 this.artists = givenArtist;
             },
 
@@ -234,14 +376,18 @@
                 document.querySelector('#number-of-artists').style.display = "none";
                 document.querySelector('#artist-names-results').style.display = "none";
 
-
+                // makes a call to fetch albums and set them in data
+                this.fetchAlbumsFromAPI().then(response => {
+                    this.setAlubums(response);
+                });
             },
 
             getArtists: function () {
                 let artistToSearch = this.searchValue;
                 let searchQuery = this.queryReady(artistToSearch);
 
-                // 
+                // putting things back after they have been cleared because everything is in a single html file 
+                //  for a real project different pages should be in a different file to keep code clean, readable, and maintainable
                 if (document.querySelector('#number-of-artists')) {
                     document.querySelector('#number-of-artists').style.display = "block";
                 }
@@ -250,11 +396,14 @@
                     document.querySelector('#artist-names-results').style.display = "block";
                 }
 
+                // once the user starts a search it goes into the selected user block and sets that to nothing 
+                // so it doesn't continue to display while searching
+                this.selectedArtist = {};
+
 
                 this.getArtistisFromAPI(searchQuery)
                     .then(response => {
                         this.setArtist(response);
-                        console.log(response);
                     });
             },
         },
