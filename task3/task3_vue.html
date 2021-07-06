@@ -55,11 +55,6 @@
             font-size: 1.5rem;
         }
 
-        /* todo this part is not working */
-        #artist-card-preview {
-            margin-bottom: 20rem !important;
-        }
-
         .artist-bio-elipsis {
             display: -webkit-box;
             -webkit-box-orient: vertical;
@@ -68,10 +63,9 @@
         }
 
         .jumbotron {
-            /* background-image: url(https://images.unsplash.com/photo-1473646590311-c48e1bc77b44?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NjB8fG11c2ljfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60); */
             background-size: cover;
             height: 100%;
-            background-image: linear-gradient(to bottom, rgba(30, 30, 30, 0.6) 0%, rgba(30, 30, 30, 0.9) 100%), url(https://images.unsplash.com/photo-1473646590311-c48e1bc77b44?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NjB8fG11c2ljfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60)
+            background-image: linear-gradient(to bottom, rgba(30, 30, 30, 0.6) 0%, rgba(30, 30, 30, 0.9) 100%), url(https://images.unsplash.com/photo-1473646590311-c48e1bc77b44?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NjB8fG11c2ljfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60);
         }
 
         .artist-social-media {
@@ -95,10 +89,6 @@
         #artist-text-bio {
             margin-bottom: 5rem;
         }
-
-        .artist-album-cards {
-            margin-bottom: 2rem;
-        }
     </style>
 </head>
 
@@ -121,9 +111,6 @@
 
     <main>
         <div id="app" class="container">
-
-            <!-- todo add a vinyl record here to make it look more musical -->
-
 
             <!-- search bar -->
             <form class="d-flex" id="search-form" @submit.prevent>
@@ -152,7 +139,7 @@
             </section>
 
             <section id="artist-names-results" v-if="artists && artists.length">
-                <div v-for="artist in artists" class="artist-card-preview">
+                <div v-for="artist in artists">
                     <div class="card w-75">
                         <div class="card-body">
                             <!-- using correct html syntax and changing the font with css for better accessibility -->
@@ -172,9 +159,6 @@
 
             <section id="artist-bio" v-if="Object.keys(selectedArtist).length != 0 ">
 
-                <!-- this would be awesome to have an api that would give us the country flag as an icon to put next to the country word -->
-
-                <!-- todo add ifs to all of these in case one is empty -->
                 <div class="jumbotron jumbotron-fluid">
                     <div class="container">
                         <h1 class="display-4 text-white" v-if="selectedArtist.strArtist" id="artist-jumbotron-heading">
@@ -209,9 +193,9 @@
                 <section>
                     <!-- artist albums -->
                     <div>
-                        <div class="row artist-album-cards">
+                        <div class="row">
 
-                            <div class="col-lg-3 col-md-6 col-sm-12" v-for="album in albums" style="margin: 2rem;">
+                            <div class="col" v-for="album in albums" style="margin: 2rem;">
                                 <div class="card" style="width: 18rem;">
 
                                     <!-- for real world production there would be multiple react or vue files that would cut down the rendering cost of constantly repainting and speed up performance of by significant amounts -->
@@ -220,6 +204,7 @@
 
                                     <div class="card-body">
                                         <h5 class="card-title">{{ album.strAlbum }}</h5>
+                                        <!-- <cite>Released: {{ album.intYearReleased }}</cite> -->
                                     </div>
                                 </div>
                             </div>
@@ -281,12 +266,6 @@
 
         </div>
     </main>
-
-
-
-    <footer>
-
-    </footer>
 </body>
 
 
@@ -357,14 +336,11 @@
 
             setAlubums: function (responseAlbums) {
                 this.albums = responseAlbums.album;
-                console.log("album data", this.albums);
             },
 
 
             setArtist: function (givenArtist) {
-                // todo what was I doing with this again?
-                givenArtist = givenArtist.artists;
-                this.artists = givenArtist;
+                this.artists = givenArtist.artists;
             },
 
             showArtistProperties: function (artist) {
@@ -404,6 +380,7 @@
                 this.getArtistisFromAPI(searchQuery)
                     .then(response => {
                         this.setArtist(response);
+                        console.log(this.selectedArtist)
                     });
             },
         },

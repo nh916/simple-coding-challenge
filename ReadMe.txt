@@ -29,7 +29,6 @@ Please complete them in one single responsive HTML structure, note that you are 
 
 Note: You DONT have to make the form do anything
 
-
 Task 3
 3) Simple Site/App
 Here is a free API, build a simple site/app where a 
@@ -48,4 +47,4 @@ Be creative!
 
 Once you're done please send back your task projects and answers to the questions. We will review task projects locally
 
-
+FIX SECTION TAGS WITH DIV
