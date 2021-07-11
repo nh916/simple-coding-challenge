@@ -8,6 +8,7 @@ What are some ways to make websites faster? (Name as many different techniques a
 •	Use CDN when possible for faster delivery from servers that are closer to them and may have better networks
 •	Optimize and compress images that removes extra and unneeded metadata and uses compression algorithms to reduce the size but keep the quality and help the website load faster
 •	A good web server with sufficient power and a good backend that has optimized algorithms that can respond fast
+•	Start looking into chrome Network tab and see what is slowing it down and see if you can eliminate it, reduce its need, or load it in strategically
 
 
 When would you use a NoSQL solution instead of SQL?
